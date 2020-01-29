@@ -1,12 +1,15 @@
 import random
 import numpy as np
 import tensornetwork
-from typing import Optional, Text
-from tensornetwork.network_components import Node
+from typing import Optional, Text, Union
+from tensornetwork.network_components import Node, BaseNode, Tensor
 
 class Qubit(Node):
-  def __init__(self, name: Optional[Text] = None, axis: Optional[Text] = None):
-    super().__init__(tensor=np.array([1, 0]), name=name, axis_names=axis)
+  def __init__(self,
+              tensor: Optional[Union[Tensor, BaseNode]] = None,
+              name: Optional[Text] = None):
+    tensor = np.array([1, 0]) if tensor is None else tensor
+    super().__init__(tensor=tensor, name=name, axis_names=["edge"])
 
   def bitstring(self) -> Text:
     state = super().get_tensor()
