@@ -1,2 +1,4 @@
-from quantn.qubit import Qubit
-from quantn.gates import XGate
+from quantn.qubit import create_qubit, contract_network
+from quantn.gates import xgate, ygate, zgate, hgate, tgate, \
+						controlled_xgate, controlled_ygate, \
+						controlled_zgate, controlled_hgate

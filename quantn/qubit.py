@@ -1,20 +1,20 @@
 import random
 import numpy as np
-import tensornetwork
-from typing import Optional, Text, Union
-from tensornetwork.network_components import Node, BaseNode, Tensor
+from typing import Optional, Text, Union, Sequence, Callable
+from tensornetwork import reachable
+from tensornetwork.network_components import Edge, Node, BaseNode, Tensor
+from tensornetwork.contractors import auto
 
-class Qubit(Node):
-  def __init__(self,
-              tensor: Optional[Union[Tensor, BaseNode]] = None,
-              name: Optional[Text] = None):
-    tensor = np.array([1, 0]) if tensor is None else tensor
-    super().__init__(tensor=tensor, name=name, axis_names=["edge"])
+def create_qubit() -> Edge:
+  tensor = Node(np.array([1, 0], dtype=complex))
+  return tensor[0]
 
-  def bitstring(self) -> Text:
-    state = super().get_tensor()
-    alpha, beta = state[0], state[1]
-    weights = [abs(alpha)**2, abs(beta)**2]
-    strings = random.choices(['0', '1'], weights=weights)
-    return strings[0]
+def contract_network(edge: Edge,
+                    output_edge_order: Optional[Sequence[Edge]] = None,
+                    strategy: Callable = auto) -> Node:
+  network = reachable(edge)
+  ignore_edge_order = True if output_edge_order == None else False
+  return strategy(network,
+                  output_edge_order=output_edge_order,
+                  ignore_edge_order=ignore_edge_order)
 
