@@ -12,190 +12,195 @@ from math import sqrt, pi
 from cmath import exp
 from flaky import flaky
 
-def test_pauli_xgate_zero_ket():
+def test_pauli_xgate_1():
   control = xgate(create_qubit())
   edge = contract_network(control)
   np.testing.assert_allclose(edge.get_tensor(), np.array([0+0j, 1+0j]))
 
-def test_pauli_xgate_one_ket():
-  b = xgate(xgate(create_qubit()))
-  d = contract_network(b)
-  np.testing.assert_allclose(d.get_tensor(), np.array([1+0j, 0+0j]))
+def test_pauli_xgate_2():
+  control = xgate(xgate(create_qubit()))
+  target = contract_network(control)
+  np.testing.assert_allclose(target.get_tensor(), np.array([1+0j, 0+0j]))
 
-def test_pauli_ygate_zero_ket():
-  e = ygate(create_qubit())
-  f = contract_network(e).get_tensor()
-  np.testing.assert_allclose(f, np.array([0+0j, 0+1j], dtype=complex))
+def test_pauli_ygate_1():
+  control = ygate(create_qubit())
+  target = contract_network(control).get_tensor()
+  np.testing.assert_allclose(target, np.array([0+0j, 0+1j], dtype=complex))
   
-def test_pauli_ygate_one_ket():
-  g = ygate(xgate(create_qubit()))
-  h = contract_network(g)
-  np.testing.assert_allclose(h.get_tensor(), np.array([0-1j, 0+0j]))
+def test_pauli_ygate_2():
+  control = ygate(xgate(create_qubit()))
+  target = contract_network(control)
+  np.testing.assert_allclose(target.get_tensor(), np.array([0-1j, 0+0j]))
   
-def test_pauli_zgate():
-  i = zgate(create_qubit())
-  j = contract_network(i).get_tensor()
-  np.testing.assert_allclose(j, np.array([1, 0]))
-  i = zgate(xgate(create_qubit()))
-  j = contract_network(i).get_tensor()
-  np.testing.assert_allclose(j, np.array([0, -1]))
+def test_pauli_zgate_1():
+  control = zgate(create_qubit())
+  target = contract_network(control).get_tensor()
+  np.testing.assert_allclose(target, np.array([1, 0]))
 
-def test_hadamard_gate():
-  k = hgate(create_qubit())
-  l = contract_network(k).get_tensor()
-  np.testing.assert_allclose(l, np.array([1, 1])/sqrt(2))
-  k = hgate(xgate(create_qubit()))
-  l = contract_network(k).get_tensor()
-  np.testing.assert_allclose(l, np.array([1, -1])/sqrt(2))
+def test_pauli_zgate_2():
+  control = zgate(xgate(create_qubit()))
+  target = contract_network(control).get_tensor()
+  np.testing.assert_allclose(target, np.array([0, -1]))
 
-def test_tgate():
-  m = tgate(create_qubit())
-  n = contract_network(m).get_tensor()
-  np.testing.assert_allclose(n, np.array([1, 0]))
-  m = tgate(xgate(create_qubit()))
-  n = contract_network(m).get_tensor()
-  np.testing.assert_allclose(n, np.array([0, exp((1j * pi) / 4)]))
+def test_hadamard_gate_1():
+  control = hgate(create_qubit())
+  target = contract_network(control).get_tensor()
+  np.testing.assert_allclose(target, np.array([1, 1])/sqrt(2))
+
+def test_hadamard_gate_2():
+  control = hgate(xgate(create_qubit()))
+  target = contract_network(control).get_tensor()
+  np.testing.assert_allclose(target, np.array([1, -1])/sqrt(2))
+
+def test_tgate_1():
+  control = tgate(create_qubit())
+  target = contract_network(control).get_tensor()
+  np.testing.assert_allclose(target, np.array([1, 0]))
+
+def test_tgate_2():
+  control = tgate(xgate(create_qubit()))
+  target = contract_network(control).get_tensor()
+  np.testing.assert_allclose(target, np.array([0, exp((1j * pi) / 4)]))
 
 def test_controlled_x_gate_1():
   # |00> controlled_x
-  o = create_qubit()
-  p = create_qubit()
-  q, _ = controlled_xgate(o, p)
-  out = contract_network(q).get_tensor()
+  control = create_qubit()
+  target = create_qubit()
+  gate, _ = controlled_xgate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[1+0j, 0+0j],
                                             [0+0j, 0+0j]]))
 
 def test_controlled_x_gate_2():
   # |01> controlled_x
-  r = create_qubit()
-  s = xgate(create_qubit())
-  t, _ = controlled_xgate(r, s)
-  out = contract_network(t).get_tensor()
+  control = create_qubit()
+  target = xgate(create_qubit())
+  gate, _ = controlled_xgate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[0+0j, 1+0j],
                                             [0+0j, 0+0j]]))
 
 def test_controlled_x_gate_3():
   # |10> controlled_x
-  u = xgate(create_qubit())
-  v = create_qubit()
-  w, _ = controlled_xgate(u, v)
-  out = contract_network(w).get_tensor()
+  control = xgate(create_qubit())
+  target = create_qubit()
+  gate, _ = controlled_xgate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[0+0j, 0+0j],
                                             [0+0j, 1+0j]]))
 
-@flaky
 def test_controlled_x_gate_4():
   # |11> controlled_x
-  x = xgate(create_qubit())
-  y = xgate(create_qubit())
-  z, _ = controlled_xgate(x, y)
-  out = contract_network(z).get_tensor()
+  control = xgate(create_qubit())
+  target = xgate(create_qubit())
+  gate, _ = controlled_xgate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[0+0j, 0+0j],
                                             [1+0j, 0+0j]]))
 
 def test_controlled_y_gate_1():
   # |00> controlled_y
-  aa = create_qubit()
-  bb = create_qubit()
-  cc, _ = controlled_ygate(aa, bb)
-  out = contract_network(cc).get_tensor()
+  control = create_qubit()
+  target = create_qubit()
+  gate, _ = controlled_ygate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[1+0j, 0+0j],
                                             [0+0j, 0+0j]]))
 
 def test_controlled_y_gate_2():
   # |01> controlled_y
-  dd = create_qubit()
-  ee = xgate(create_qubit())
-  ff, _ = controlled_ygate(dd, ee)
-  out = contract_network(ff).get_tensor()
+  control = create_qubit()
+  target = xgate(create_qubit())
+  gate, _ = controlled_ygate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[0+0j, 1+0j],
                                             [0+0j, 0+0j]]))
 
 def test_controlled_y_gate_3():
   # |10> controlled_y
-  gg = xgate(create_qubit())
-  hh = create_qubit()
-  ii, _ = controlled_ygate(gg, hh)
-  out = contract_network(ii).get_tensor()
+  control = xgate(create_qubit())
+  target = create_qubit()
+  gate, _ = controlled_ygate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[0+0j, 0+0j],
                                             [0+0j, 0+1j]]))
 
 def test_controlled_y_gate_4():
   # |11> controlled_y
-  jj = xgate(create_qubit())
-  kk = xgate(create_qubit())
-  ll, _ = controlled_ygate(jj, kk)
-  out = contract_network(ll).get_tensor()
+  control = xgate(create_qubit())
+  target = xgate(create_qubit())
+  gate, _ = controlled_ygate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[0+0j, 0+0j],
                                             [0-1j, 0+0j]]))
 
 def test_controlled_z_gate_1():
   # |00> controlled_z
-  jj = create_qubit()
-  kk = create_qubit()
-  ll, _ = controlled_zgate(jj, kk)
-  out = contract_network(ll).get_tensor()
-  print(out - np.array([[1+0j, 0+0j], [0+0j, 0+0j]]))
+  control = create_qubit()
+  target = create_qubit()
+  gate, _ = controlled_zgate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[1+0j, 0+0j],
                                             [0+0j, 0+0j]]))
 
 def test_controlled_z_gate_2():
   # |01> controlled_z
-  jj = create_qubit()
-  kk = xgate(create_qubit())
-  ll, _ = controlled_zgate(jj, kk)
-  out = contract_network(ll).get_tensor()
-  print(out - np.array([[1+0j, 0+0j], [0+0j, 0+0j]]))
+  control = create_qubit()
+  target = xgate(create_qubit())
+  gate, _ = controlled_zgate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[0+0j, 1+0j],
                                             [0+0j, 0+0j]]))
 
 def test_controlled_z_gate_3():
   # |10> controlled_z
-  jj = xgate(create_qubit())
-  kk = create_qubit()
-  ll, _ = controlled_zgate(jj, kk)
-  out = contract_network(ll).get_tensor()
+  control = xgate(create_qubit())
+  target = create_qubit()
+  gate, _ = controlled_zgate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[0+0j, 0+0j],
                                             [1+0j, 0+0j]]))
 
 def test_controlled_z_gate_4():
   # |11> controlled_z
-  jj = xgate(create_qubit())
-  kk = xgate(create_qubit())
-  ll, _ = controlled_zgate(jj, kk)
-  out = contract_network(ll).get_tensor()
+  control = xgate(create_qubit())
+  target = xgate(create_qubit())
+  gate, _ = controlled_zgate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[0+0j, 0+0j],
                                             [0+0j, -1+0j]]))
 
 def test_controlled_h_gate_1():
   # |00> controlled_h
-  jj = create_qubit()
-  kk = create_qubit()
-  ll, _ = controlled_hgate(jj, kk)
-  out = contract_network(ll).get_tensor()
+  control = create_qubit()
+  target = create_qubit()
+  gate, _ = controlled_hgate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[1+0j, 0+0j], [0+0j, 0+0j]]))
 
 def test_controlled_h_gate_2():
   # |01> controlled_h
-  jj = create_qubit()
-  kk = xgate(create_qubit())
-  ll, _ = controlled_hgate(jj, kk)
-  out = contract_network(ll).get_tensor()
+  control = create_qubit()
+  target = xgate(create_qubit())
+  gate, _ = controlled_hgate(control, target)
+  out = contract_network(gate).get_tensor()
   np.testing.assert_allclose(out, np.array([[0+0j, 1+0j], [0+0j, 0+0j]]))
 
 def test_controlled_h_gate_3():
   # |10> controlled_h
   # pudb.set_trace()
-  jj = xgate(create_qubit())
-  kk = create_qubit()
-  ll, _ = controlled_hgate(jj, kk)
-  out = contract_network(ll).get_tensor()
-  np.testing.assert_allclose(out, np.array([[0+0j, 0+0j], [0.70711+0j, 0.70711+0j]]), atol=3.21881345e-06)
+  control = xgate(create_qubit())
+  target = create_qubit()
+  gate, _ = controlled_hgate(control, target)
+  out = contract_network(gate).get_tensor()
+  np.testing.assert_allclose(out, np.array([[0+0j, 0+0j],
+                            [0.70711+0j, 0.70711+0j]]), atol=3.21881345e-06)
 
 def test_controlled_h_gate_4():
   # |11> controlled_h
-  jj = xgate(create_qubit())
-  kk = xgate(create_qubit())
-  ll, _ = controlled_hgate(jj, kk)
-  out = contract_network(ll).get_tensor()
-  np.testing.assert_allclose(out, np.array([[0+0j, 0+0j], [0.70711+0j, -0.70711+0j]]), atol=3.21881345e-06)
+  control = xgate(create_qubit())
+  target = xgate(create_qubit())
+  gate, _ = controlled_hgate(control, target)
+  out = contract_network(gate).get_tensor()
+  np.testing.assert_allclose(out, np.array([[0+0j, 0+0j],
+                             [0.70711+0j, -0.70711+0j]]), atol=3.21881345e-06)
