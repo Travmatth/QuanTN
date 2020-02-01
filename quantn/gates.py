@@ -35,12 +35,11 @@ def tgate(edge: tn.Edge) -> tn.Edge:
 import numpy as np
 def controlled_xgate(control_edge: tn.Edge,
                     target_edge: tn.Edge) -> Tuple[tn.Edge, tn.Edge]:
-    tensor = np.array([
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 0, 1],
-        [0, 0, 1, 0]
-    ])
+    gate = backend.create_node([[1, 0, 0, 0],
+                                [0, 1, 0, 0],
+                                [0, 0, 0, 1],
+                                [0, 0, 1, 0]])
+    tensor = np.array()
     tensor = np.reshape(tensor, [2, 2, 2, 2])
     ch = tn.Node(tensor)
     ch[2] ^ control_edge
