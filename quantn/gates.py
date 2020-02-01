@@ -1,10 +1,9 @@
-import numpy as np
-from typing import Optional, Text, Tuple, Sequence
-from quantn.qubit import create_qubit
-import quantn.backend as backend
-import tensornetwork as tn
-from math import sqrt, pi
 from cmath import exp
+from typing import Tuple
+from math import sqrt, pi
+import tensornetwork as tn
+import quantn.backend as backend
+from quantn.qubit import create_qubit
 
 def xgate(edge: tn.Edge) -> tn.Edge:
     gate = backend.create_node([[0, 1], [1, 0]])
@@ -32,58 +31,37 @@ def tgate(edge: tn.Edge) -> tn.Edge:
     edge ^ gate[1]
     return gate[0]
 
-import numpy as np
 def controlled_xgate(control_edge: tn.Edge,
                     target_edge: tn.Edge) -> Tuple[tn.Edge, tn.Edge]:
-    gate = backend.create_node([[1, 0, 0, 0],
-                                [0, 1, 0, 0],
-                                [0, 0, 0, 1],
-                                [0, 0, 1, 0]])
-    tensor = np.array()
-    tensor = np.reshape(tensor, [2, 2, 2, 2])
-    ch = tn.Node(tensor)
-    ch[2] ^ control_edge
-    ch[3] ^ target_edge
-    return ch[0], ch[1]
+    tensor = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]
+    gate = backend.create_node(tensor, with_shape=[2, 2, 2, 2])
+    gate[2] ^ control_edge
+    gate[3] ^ target_edge
+    return gate[0], gate[1]
 
 def controlled_ygate(control_edge: tn.Edge,
                     target_edge: tn.Edge) -> Tuple[tn.Edge, tn.Edge]:
-    tensor = np.array([
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 0, 0-1j],
-        [0, 0, 0+1j, 0]
-    ])
-    tensor = np.reshape(tensor, [2, 2, 2, 2])
-    ch = tn.Node(tensor)
-    ch[2] ^ control_edge
-    ch[3] ^ target_edge
-    return ch[0], ch[1]
+    tensor = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 0-1j], [0, 0, 0+1j, 0]]
+    gate = backend.create_node(tensor, with_shape=[2, 2, 2, 2])
+    gate[2] ^ control_edge
+    gate[3] ^ target_edge
+    return gate[0], gate[1]
 
 def controlled_zgate(control_edge: tn.Edge,
                     target_edge: tn.Edge) -> Tuple[tn.Edge, tn.Edge]:
-    tensor = np.array([
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, -1]
-    ])
-    tensor = np.reshape(tensor, [2, 2, 2, 2])
-    ch = tn.Node(tensor)
-    ch[2] ^ control_edge
-    ch[3] ^ target_edge
-    return ch[0], ch[1]
+    tensor = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -1]]
+    gate = backend.create_node(tensor, with_shape=[2, 2, 2, 2])
+    gate[2] ^ control_edge
+    gate[3] ^ target_edge
+    return gate[0], gate[1]
 
 def controlled_hgate(control_edge: tn.Edge,
                     target_edge: tn.Edge) -> Tuple[tn.Edge, tn.Edge]:
-    tensor = np.array([
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1/sqrt(2), 1/sqrt(2)],
-        [0, 0, 1/sqrt(2), -1/sqrt(2)]
-    ])
-    tensor = np.reshape(tensor, [2, 2, 2, 2])
-    ch = tn.Node(tensor)
-    ch[2] ^ control_edge
-    ch[3] ^ target_edge
-    return ch[0], ch[1]
+    tensor = [[1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1/sqrt(2), 1/sqrt(2)],
+            [0, 0, 1/sqrt(2), -1/sqrt(2)]]
+    gate = backend.create_node(tensor, with_shape=[2, 2, 2, 2])
+    gate[2] ^ control_edge
+    gate[3] ^ target_edge
+    return gate[0], gate[1]
