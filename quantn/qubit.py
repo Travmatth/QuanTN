@@ -18,17 +18,26 @@ def contract_network(edge: tn.Edge, output_edge_order: order = None) -> tn.Node:
                   ignore_edge_order=ignore_edge_order)
 
 def eval_probability(node: Union[tn.Edge, tn.Node]) -> np.ndarray:
-  if isinstance(node, tn.Edge):
+  if not isinstance(node, tn.Node):
     raise ValueError("Qubit must be of tensornetwork.Node type")
   elif len(node.get_all_nondangling()) != 0:
     raise ValueError("Tensor network must be contracted before taking \
       probability amplitude")
-  return node.get_tensor()
+  state = node.get_tensor()
+  state = np.abs(state) ** 2
+  state /= np.sum(state)
+  return state
 
 def take_bitstring(node: Union[tn.Edge, tn.Node]) -> Text:
-  if isinstance(node, tn.Edge):
+  if not isinstance(node, tn.Node):
     raise ValueError("Node must be of tensornetwork.Node type")
-  elif node.get_rank() == 1:
-    alpha, beta = node.get_tensor()
-    weights = [abs(alpha)**2, abs(beta)**2]
-    return random.choices(['0', '1'], weights=weights)
+  elif len(node.get_all_nondangling()) != 0:
+    raise ValueError("Tensor network must be contracted before taking \
+      bitstring")
+  state_vector = eval_probability(node)
+  flattened_state_vector = state_vector.ravel()
+  indices = [i for i in range(len(flattened_state_vector))]
+  linear_index = np.random.choice(indices, p=flattened_state_vector)
+  random_index = np.unravel_index(linear_index, state_vector.shape)
+  bitstring = ''.join(str(bit) for bit in random_index)
+  return bitstring
