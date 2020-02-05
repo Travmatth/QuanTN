@@ -4,3 +4,5 @@ env
 *.egg-info
 .vscode
 testing.py
+build
+dist
