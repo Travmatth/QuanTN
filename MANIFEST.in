@@ -1,0 +1,4 @@
+include requirements.txt
+global-exclude */*_test.py
+global-exclude quantn/tests/*
+prune tests
