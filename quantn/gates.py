@@ -4,7 +4,7 @@ from math import sqrt, pi
 import tensornetwork as tn
 import quantn.backend as backend
 
-def apply(state: Sequence[tn.Node], gate: Callable, *qubits: Sequence[int]) -> None: 
+def apply_gate(state: Sequence[tn.Node], gate: Callable, *qubits: Sequence[int]) -> None: 
     n = len(qubits)
     if n > 2:
         raise ValueError("Error, may only apply gates to up to two qubits")

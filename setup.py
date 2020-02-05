@@ -31,7 +31,7 @@ requirements = [
 ]
 
 setup(
-  name='tensornetwork',
+  name='quantn-travmatth',
   version=__version__,
   url='http://github.com/travmatth/quantn',
   author='Travis Matthews',
